@@ -1,0 +1,8 @@
+
+.DS_STORE
+.classpath
+.settings/
+.project
+dataset/
+bin/
+
