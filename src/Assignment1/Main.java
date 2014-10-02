@@ -8,12 +8,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
+import java.util.Queue;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
+import org.apache.tika.sax.BodyContentHandler;
+import org.apache.tika.sax.Link;
+import org.apache.tika.sax.LinkContentHandler;
+import org.apache.tika.sax.TeeContentHandler;
+import org.apache.tika.sax.ToHTMLContentHandler;
 import org.apache.tika.sax.ToXMLContentHandler;
 import org.apache.tika.sax.XHTMLContentHandler;
 import org.apache.tika.sax.xpath.Matcher;
@@ -50,20 +57,20 @@ public class Main {
         }
     }
 
-    public static void XHTML2JSON(String inputPath, String outputPath) throws IOException {
+    public static void XHTML2JSON(String inputPath, String outputPath, String filename) throws IOException {
         Parser parser = new AutoDetectParser();
 
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
             inputStream = new BufferedInputStream(new FileInputStream(new File(inputPath)));
-            outputStream = new BufferedOutputStream(new FileOutputStream(new File(outputPath)));
+            //outputStream = new BufferedOutputStream(new FileOutputStream(new File(outputPath)));
             // TODO Implement the JSONTableContentHandler
             XPathParser xhtmlParser = new XPathParser("xhtml", XHTMLContentHandler.XHTML);
             Matcher divContentMatcher = xhtmlParser
                     .parse("/xhtml:html/xhtml:body/descendant::node()");
             ContentHandler handler = new MatchingContentHandler(new JSONTableContentHandler(
-                    outputStream), divContentMatcher);
+            		outputPath, filename), divContentMatcher);
             Metadata metadata = new Metadata();
             parser.parse(inputStream, handler, metadata, new ParseContext());
             
@@ -81,13 +88,26 @@ public class Main {
         }
     }
     
-    public static void main(String[] args) {
-        String tsvPath = "dataset/computrabajo-ar-20121106.tsv";
-        String xhtmlPath = "dataset/1.html";
-        String jsonPath = "dataset/1.json";
+    public static void main(String[] args) throws SAXException, TikaException {
+    	//String startUrl = "file:///Users/heyang/Documents/eclipse/workspace/CSCI572/dataset/crawl.html";
+    	String startUrl = "file:///Users/heyang/Documents/eclipse/workspace/CSCI572/dataset/test.html";
+        String tsvBasicPath = "dataset/tsv/";
+        String xhtmlBasicPath = "dataset/xhtml/";
+        String jsonBasicPath = "dataset/json/";
+        String tsvPath, xhtmlPath, jsonPath, filename;
+
         try {
-            TSV2XHTML(tsvPath, xhtmlPath);
-            XHTML2JSON(xhtmlPath, jsonPath);
+        	SimpleWebCrawler crawler = new SimpleWebCrawler(startUrl);
+    		Queue<String> urlQueue = crawler.getNewLink();
+    		for(String url : urlQueue){
+    			if(url.matches("(.*)\\.tsv")){
+        			filename = url.substring(0, url.length() - 4);
+    				tsvPath = tsvBasicPath + url;
+    				xhtmlPath = xhtmlBasicPath + filename + ".html";
+    	            TSV2XHTML(tsvPath, xhtmlPath);
+    	            XHTML2JSON(xhtmlPath, jsonBasicPath, filename);
+    			}
+    		}
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

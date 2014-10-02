@@ -1,5 +1,9 @@
 package Assignment1;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
@@ -17,6 +21,8 @@ public class JSONTableContentHandler extends ToTextContentHandler {
     private ArrayList<String> values      = new ArrayList<String>();
     private boolean           headStarted = false;
     private boolean           dataStarted = false;
+    private int				  count		  = 0;
+    private String			  outputPath;
 
     /**
      * Creates an JSON serializer that writes to the given byte stream
@@ -24,12 +30,14 @@ public class JSONTableContentHandler extends ToTextContentHandler {
      * @param stream
      *            output stream
      */
-    public JSONTableContentHandler(OutputStream stream) {
+    public JSONTableContentHandler(OutputStream stream, String outputFolder, String filename) {
         super(stream);
+        this.outputPath = outputFolder+filename;
     }
 
-    public JSONTableContentHandler() {
+    public JSONTableContentHandler(String outputFolder, String filename) {
         super();
+        this.outputPath = outputFolder+filename;
     }
 
     /**
@@ -50,11 +58,20 @@ public class JSONTableContentHandler extends ToTextContentHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (localName.equals("table")) {
-            write(jsonArray.toString());
+        	//TODO remove the write
+            //write(jsonArray.toString());
         } else if (localName.equals("tr")) {
             if (values.size() > 0) {
                 JsonObject curObj = Convert2Json(names, values);
-                jsonArray.add(curObj);
+                //TODO output curObj to json file
+                try {
+					Write2Json(curObj.toString());
+					count++;
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+                //jsonArray.add(curObj);
                 values.clear();
             }
         }
@@ -98,5 +115,13 @@ public class JSONTableContentHandler extends ToTextContentHandler {
             curObj.addProperty(names.get(i), values.get(i));
         }
         return curObj;
+    }
+    
+    protected void Write2Json(String curJson) throws IOException{
+    	//TODO: use file's name
+    	BufferedWriter output = new BufferedWriter(new FileWriter(new File(outputPath + "_" + count + ".json")));
+    	output.flush();
+    	output.write(curJson.toCharArray());
+    	output.close();
     }
 }
