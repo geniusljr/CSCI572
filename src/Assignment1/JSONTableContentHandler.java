@@ -11,18 +11,17 @@ import org.apache.tika.sax.ToTextContentHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 public class JSONTableContentHandler extends ToTextContentHandler {
 
-    private JsonArray         jsonArray;
+    //private JsonArray         jsonArray;
     private ArrayList<String> names       = new ArrayList<String>();
     private ArrayList<String> values      = new ArrayList<String>();
     private boolean           headStarted = false;
     private boolean           dataStarted = false;
-    private int				  count		  = 0;
-    private String			  outputPath;
+    private int               count       = 0;
+    private String            outputPath;
 
     /**
      * Creates an JSON serializer that writes to the given byte stream
@@ -32,12 +31,12 @@ public class JSONTableContentHandler extends ToTextContentHandler {
      */
     public JSONTableContentHandler(OutputStream stream, String outputFolder, String filename) {
         super(stream);
-        this.outputPath = outputFolder+filename;
+        this.outputPath = outputFolder + filename;
     }
 
     public JSONTableContentHandler(String outputFolder, String filename) {
         super();
-        this.outputPath = outputFolder+filename;
+        this.outputPath = outputFolder + filename;
     }
 
     /**
@@ -47,7 +46,7 @@ public class JSONTableContentHandler extends ToTextContentHandler {
     public void startElement(String uri, String localName, String qName, Attributes atts)
             throws SAXException {
         if (localName.equals("table")) {
-            jsonArray = new JsonArray();
+            //jsonArray = new JsonArray();
         } else if (localName.equals("th")) {
             headStarted = true;
         } else if (localName.equals("td")) {
@@ -58,20 +57,20 @@ public class JSONTableContentHandler extends ToTextContentHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (localName.equals("table")) {
-        	//TODO remove the write
-            //write(jsonArray.toString());
+            // TODO remove the write
+            // write(jsonArray.toString());
         } else if (localName.equals("tr")) {
             if (values.size() > 0) {
-                JsonObject curObj = Convert2Json(names, values);
-                //TODO output curObj to json file
+                JsonObject curObj = convert2Json(names, values);
+                // TODO output curObj to json file
                 try {
-					Write2Json(curObj.toString());
-					count++;
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-                //jsonArray.add(curObj);
+                    write2Json(curObj.toString());
+                    count++;
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                // jsonArray.add(curObj);
                 values.clear();
             }
         }
@@ -109,19 +108,20 @@ public class JSONTableContentHandler extends ToTextContentHandler {
         super.characters(string.toCharArray(), 0, string.length());
     }
 
-    protected JsonObject Convert2Json(ArrayList<String> names, ArrayList<String> values) {
+    protected JsonObject convert2Json(ArrayList<String> names, ArrayList<String> values) {
         JsonObject curObj = new JsonObject();
         for (int i = 0; i < names.size(); i++) {
             curObj.addProperty(names.get(i), values.get(i));
         }
         return curObj;
     }
-    
-    protected void Write2Json(String curJson) throws IOException{
-    	//TODO: use file's name
-    	BufferedWriter output = new BufferedWriter(new FileWriter(new File(outputPath + "_" + count + ".json")));
-    	output.flush();
-    	output.write(curJson.toCharArray());
-    	output.close();
+
+    protected void write2Json(String curJson) throws IOException {
+        // TODO: use file's name
+        BufferedWriter output = new BufferedWriter(new FileWriter(new File(outputPath + "_" + count
+                + ".json")));
+        output.flush();
+        output.write(curJson.toCharArray());
+        output.close();
     }
 }
