@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 
 public class Deduplicator {
     
-    public static final String[] keySet = {};
+    public static final String[] keySet = {"location", "company", "Department", "title", "duration", "jobtype", "url"};
     private SimHasher simHasher;
     
     public Deduplicator(String hashAlg) {
