@@ -64,7 +64,7 @@ public class JSONTableContentHandler extends ToTextContentHandler {
                 JsonObject curObj = convert2Json(names, values);
                 // TODO output curObj to json file
                 try {
-                    write2Json(curObj.toString());
+                    write2Json(curObj);
                     count++;
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
@@ -116,12 +116,13 @@ public class JSONTableContentHandler extends ToTextContentHandler {
         return curObj;
     }
 
-    protected void write2Json(String curJson) throws IOException {
+    protected void write2Json(JsonObject curJson) throws IOException {
         // TODO: use file's name
+        
         BufferedWriter output = new BufferedWriter(new FileWriter(new File(outputPath + "_" + count
                 + ".json")));
         output.flush();
-        output.write(curJson.toCharArray());
+        output.write(curJson.toString().toCharArray());
         output.close();
     }
 }

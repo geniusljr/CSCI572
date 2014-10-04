@@ -82,8 +82,13 @@ public class Main {
         }
     }
     
-    public static void main(String[] args) throws SAXException, TikaException {
-    	//String startUrl = "file:///Users/heyang/Documents/eclipse/workspace/CSCI572/dataset/crawl.html";
+    public static void main(String[] args) throws SAXException, TikaException, IOException {
+        String tsvPath = "dataset/tsv/computrabajo-ar-20121106.tsv";
+        String xhtmlPath = "dataset/xhtml/1.html";
+        String jsonBasicPath = "dataset/json/";
+        TSV2XHTML(tsvPath, xhtmlPath);
+        XHTML2JSON(xhtmlPath, jsonBasicPath, "1");
+        /*
     	String startUrl = "file:///Users/heyang/Documents/eclipse/workspace/CSCI572/dataset/test.html";
         String tsvBasicPath = "dataset/tsv/";
         String xhtmlBasicPath = "dataset/xhtml/";
@@ -105,7 +110,7 @@ public class Main {
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
+        }*/
     }
 
 }
