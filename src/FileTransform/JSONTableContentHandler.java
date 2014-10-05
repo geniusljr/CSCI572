@@ -61,7 +61,7 @@ public class JSONTableContentHandler extends ToTextContentHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (localName.equals("table")) {
             System.out.println("After deduplication: " + DeduplicatorExact.primaryKeySet.size()
-                    + "---" + " Before: " + DeduplicatorExact.totalEmploymentNumber);
+                    + " --- " + "Before: " + DeduplicatorExact.totalEmploymentNumber);
         } else if (localName.equals("tr")) {
             if (values.size() > 0) {
                 DeduplicatorExact.totalEmploymentNumber++;
