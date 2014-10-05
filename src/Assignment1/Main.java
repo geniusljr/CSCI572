@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Queue;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
@@ -23,6 +24,7 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 import FileTransform.JSONTableContentHandler;
+import FileTransform.SimpleWebCrawler;
 import FileTransform.TSVParser;
 
 public class Main {
@@ -86,21 +88,24 @@ public class Main {
         }
     }
 
-    public static void TSV2JSON(String datasetDir) throws IOException {
-        File tsvDir = new File(datasetDir + "/tsv/");
-        File[] tsvFiles = tsvDir.listFiles();
-        File xhtmlDir = new File(datasetDir + "/xhtml/");
+    public static void TSV2JSON(String datasetDir, Queue<String> tsvFileNames) throws IOException {
+
+        String tsvDir = datasetDir + "/tsv/";
+        String xhtmlDir = datasetDir + "/xhtml/";
         String jsonDir = datasetDir + "/json/";
-        for (int i = 0; i < tsvFiles.length; i++) {
-            String xhtmlFilePath = (xhtmlDir.getAbsolutePath() + "/" + tsvFiles[i].getName() + ".xhtml");
+
+        for (String tsvFileName : tsvFileNames) {
+            String xhtmlFilePath = (xhtmlDir + "/" + tsvFileName + ".xhtml");
             System.out.println(xhtmlFilePath);
-            TSV2XHTML(tsvFiles[i].getAbsolutePath(), xhtmlFilePath);
-            XHTML2JSON(xhtmlFilePath, jsonDir, tsvFiles[i].getName());
+            TSV2XHTML(tsvDir + tsvFileName, xhtmlFilePath);
+            XHTML2JSON(xhtmlFilePath, jsonDir, tsvFileName);
         }
     }
 
     public static void main(String[] args) throws SAXException, TikaException, IOException {
-        TSV2JSON("dataset");
+        String startUrl = "";
+        SimpleWebCrawler tsvFileCrawler = new SimpleWebCrawler(startUrl);
+        TSV2JSON("dataset", tsvFileCrawler.getNewLink());
     }
 
 }
