@@ -19,11 +19,11 @@ import com.google.gson.JsonObject;
 public class JSONTableContentHandler extends ToTextContentHandler {
 
     // private JsonArray jsonArray;
-    private ArrayList<String> names         = new ArrayList<String>();
-    private ArrayList<String> values        = new ArrayList<String>();
-    private boolean           headStarted   = false;
-    private boolean           dataStarted   = false;
-    private int               count         = 0;
+    private ArrayList<String> names       = new ArrayList<String>();
+    private ArrayList<String> values      = new ArrayList<String>();
+    private boolean           headStarted = false;
+    private boolean           dataStarted = false;
+    private int               count       = 0;
     private String            outputPath;
 
     /**
@@ -60,18 +60,17 @@ public class JSONTableContentHandler extends ToTextContentHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (localName.equals("table")) {
-            System.out.println(DeduplicatorExact.primaryKeySet.size());
-            // remove the write
-            // write(jsonArray.toString());
+            System.out.println("After deduplication: " + DeduplicatorExact.primaryKeySet.size()
+                    + "---" + " Before: " + DeduplicatorExact.totalEmploymentNumber);
         } else if (localName.equals("tr")) {
             if (values.size() > 0) {
+                DeduplicatorExact.totalEmploymentNumber++;
                 JsonObject curObj = convert2Json(names, values);
                 EmploymentJsonObject curEmploymentObj = new EmploymentJsonObject(curObj);
                 int primaryKeyHash = curEmploymentObj.hashCode();
                 if (!DeduplicatorExact.primaryKeySet.contains(primaryKeyHash)) {
                     // output curObj to json file
-                    
-                    //count++;
+                    // count++;
                     DeduplicatorExact.primaryKeySet.add(primaryKeyHash);
                 }
 

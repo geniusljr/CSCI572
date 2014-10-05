@@ -8,11 +8,6 @@ public class EmploymentJsonObject {
     public static final String   CHARSET        = "UTF-8";
     public static final String[] PRIMARY_KEYS   = { "company", "department", "jobtype", "title" };
 
-    // company, department, title, jobtype, 26133
-    // company, department, title, 26078
-    // company, department, 7311
-    // company, 5662
-
     public EmploymentJsonObject(JsonObject employmentJson) {
         this.employmentJson = employmentJson;
     }

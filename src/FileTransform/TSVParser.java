@@ -63,8 +63,8 @@ public class TSVParser extends AbstractParser {
         String line = "";
         while ((line = reader.readLine()) != null) {
             String[] attributeValues = line.split("\t");
-            if (attributeValues.length != tsvAttributes.length+1) {
-                continue; //skip the invalid data
+            if (attributeValues.length != tsvAttributes.length + 1) {
+                continue; // skip the invalid data
             }
             xhtml.startElement("tr");
             for (int i = 0; i < tsvAttributes.length; i++) {
