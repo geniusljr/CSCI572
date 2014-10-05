@@ -1,4 +1,4 @@
-package Assignment1;
+package SimHash;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -29,15 +29,13 @@ public class MD5HashFunction extends HashFunction {
         } catch (UnsupportedEncodingException e) {
             System.err.println("There is no such charset!!");
         }
-        int digestLength = messageDigest.getDigestLength();
-        for (int i = 0; i < digestLength; i++) {
-            byte curByte = hashByte[i];
-            for (int j = 0; j < 8; j++) {
-                hash.set(i*8+j, (curByte & 1) == 1);
-                curByte >>= 1;
-            }
-        }
+        hash = BitSet.valueOf(hashByte);
         return hash;
+    }
+    
+    public static void main(String[] args) {
+        MD5HashFunction h = new MD5HashFunction("UTF-8");
+        h.hash("asdf");
     }
 
     @Override

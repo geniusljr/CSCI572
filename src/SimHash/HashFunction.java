@@ -1,4 +1,4 @@
-package Assignment1;
+package SimHash;
 
 import java.util.BitSet;
 

@@ -1,4 +1,4 @@
-package Assignment1;
+package FileTransform;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,11 +11,13 @@ import org.apache.tika.sax.ToTextContentHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import EmploymentJsonUtil.EmploymentJsonObject;
+
 import com.google.gson.JsonObject;
 
 public class JSONTableContentHandler extends ToTextContentHandler {
 
-    //private JsonArray         jsonArray;
+    // private JsonArray jsonArray;
     private ArrayList<String> names       = new ArrayList<String>();
     private ArrayList<String> values      = new ArrayList<String>();
     private boolean           headStarted = false;
@@ -46,7 +48,7 @@ public class JSONTableContentHandler extends ToTextContentHandler {
     public void startElement(String uri, String localName, String qName, Attributes atts)
             throws SAXException {
         if (localName.equals("table")) {
-            //jsonArray = new JsonArray();
+            // jsonArray = new JsonArray();
         } else if (localName.equals("th")) {
             headStarted = true;
         } else if (localName.equals("td")) {
@@ -57,20 +59,21 @@ public class JSONTableContentHandler extends ToTextContentHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (localName.equals("table")) {
-            // TODO remove the write
+            System.out.println(count);
+            // remove the write
             // write(jsonArray.toString());
         } else if (localName.equals("tr")) {
             if (values.size() > 0) {
                 JsonObject curObj = convert2Json(names, values);
-                // TODO output curObj to json file
+                EmploymentJsonObject curEmploymentObj = new EmploymentJsonObject(curObj);
+                // output curObj to json file
                 try {
-                    write2Json(curObj);
-                    count++;
+                    write2Json(curEmploymentObj);
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                // jsonArray.add(curObj);
+                count++;
+
                 values.clear();
             }
         }
@@ -116,13 +119,19 @@ public class JSONTableContentHandler extends ToTextContentHandler {
         return curObj;
     }
 
-    protected void write2Json(JsonObject curJson) throws IOException {
-        // TODO: use file's name
-        
-        BufferedWriter output = new BufferedWriter(new FileWriter(new File(outputPath + "_" + count
-                + ".json")));
+    protected void write2Json(EmploymentJsonObject employmentJson) throws IOException {
+        // use file's name
+        // TODO when there is "/" in the primaryKeyName, then it will be parsed
+        // as a directory, and then there will be exception.
+        String outputFolderPath = outputPath + employmentJson.getPrimaryKeyName();
+        File file = new File(outputFolderPath);
+        if (!file.exists()) {
+            file.mkdir();
+        }
+        BufferedWriter output = new BufferedWriter(new FileWriter(new File(outputFolderPath + "/"
+                + count + ".json")));
         output.flush();
-        output.write(curJson.toString().toCharArray());
+        output.write(employmentJson.toString().toCharArray());
         output.close();
     }
 }

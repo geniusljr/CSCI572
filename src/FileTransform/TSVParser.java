@@ -1,4 +1,4 @@
-package Assignment1;
+package FileTransform;
 
 import java.io.BufferedReader;
 import java.io.IOException;
