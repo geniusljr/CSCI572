@@ -1,4 +1,4 @@
-package EmploymentJsonUtil;
+package EmploymentJson;
 
 import com.google.gson.JsonObject;
 
@@ -13,12 +13,18 @@ public class EmploymentJsonObject {
     }
 
     public String getPrimaryKeyName() {
-        StringBuffer primaryKeys = new StringBuffer();
+        StringBuffer primaryKeysBuffer = new StringBuffer();
         for (int i = 0; i < PRIMARY_KEYS.length; i++) {
-            primaryKeys.append(i == 0 ? "" : "_");
-            primaryKeys.append(employmentJson.get(PRIMARY_KEYS[i]));
+            primaryKeysBuffer.append(i == 0 ? "" : "_");
+            primaryKeysBuffer.append(employmentJson.get(PRIMARY_KEYS[i]));
         }
-        return primaryKeys.toString();
+        String primaryKeys = primaryKeysBuffer.toString();
+        primaryKeys = primaryKeys.replace("/", "$");
+        return primaryKeys; // to avoid invalid parse for folders.
+    }
+    
+    public JsonObject getJsonObject() {
+        return employmentJson;
     }
 
     public int hashCode() {

@@ -1,4 +1,4 @@
-package EmploymentJsonUtil;
+package EmploymentJson;
 
 import java.util.BitSet;
 

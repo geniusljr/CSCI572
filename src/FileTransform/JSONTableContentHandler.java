@@ -11,8 +11,8 @@ import org.apache.tika.sax.ToTextContentHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import Deduplication.DeduplicatorExact;
-import EmploymentJsonUtil.EmploymentJsonObject;
+import Deduplication.ExactDeduplicator;
+import EmploymentJson.EmploymentJsonObject;
 
 import com.google.gson.JsonObject;
 
@@ -23,7 +23,6 @@ public class JSONTableContentHandler extends ToTextContentHandler {
     private ArrayList<String> values      = new ArrayList<String>();
     private boolean           headStarted = false;
     private boolean           dataStarted = false;
-    private int               count       = 0;
     private String            outputPath;
 
     /**
@@ -32,14 +31,14 @@ public class JSONTableContentHandler extends ToTextContentHandler {
      * @param stream
      *            output stream
      */
-    public JSONTableContentHandler(OutputStream stream, String outputFolder, String filename) {
+    public JSONTableContentHandler(OutputStream stream, String outputFolder) {
         super(stream);
-        this.outputPath = outputFolder + filename;
+        this.outputPath = outputFolder;
     }
 
-    public JSONTableContentHandler(String outputFolder, String filename) {
+    public JSONTableContentHandler(String outputFolder) {
         super();
-        this.outputPath = outputFolder + filename;
+        this.outputPath = outputFolder;
     }
 
     /**
@@ -60,18 +59,23 @@ public class JSONTableContentHandler extends ToTextContentHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (localName.equals("table")) {
-            System.out.println("After deduplication: " + DeduplicatorExact.primaryKeySet.size()
-                    + " --- " + "Before: " + DeduplicatorExact.totalEmploymentNumber);
+            System.out.println("Before deduplication: " + ExactDeduplicator.totalEmploymentNumber
+                    + " --- " + "After: " + ExactDeduplicator.primaryKeySet.size());
         } else if (localName.equals("tr")) {
             if (values.size() > 0) {
-                DeduplicatorExact.totalEmploymentNumber++;
+                ExactDeduplicator.totalEmploymentNumber++;
                 JsonObject curObj = convert2Json(names, values);
                 EmploymentJsonObject curEmploymentObj = new EmploymentJsonObject(curObj);
                 int primaryKeyHash = curEmploymentObj.hashCode();
-                if (!DeduplicatorExact.primaryKeySet.contains(primaryKeyHash)) {
+                if (!ExactDeduplicator.primaryKeySet.contains(primaryKeyHash)) {
                     // output curObj to json file
+                    try {
+                        write2Json(curEmploymentObj);
+                    } catch (IOException e) {
+                        System.err.println("Something is wrong with the file!");
+                    }
                     // count++;
-                    DeduplicatorExact.primaryKeySet.add(primaryKeyHash);
+                    ExactDeduplicator.primaryKeySet.add(primaryKeyHash);
                 }
 
                 values.clear();
@@ -121,17 +125,12 @@ public class JSONTableContentHandler extends ToTextContentHandler {
 
     protected void write2Json(EmploymentJsonObject employmentJson) throws IOException {
         // use file's name
-        // TODO when there is "/" in the primaryKeyName, then it will be parsed
         // as a directory, and then there will be exception.
         String outputFolderPath = outputPath + employmentJson.getPrimaryKeyName();
-        File file = new File(outputFolderPath);
-        if (!file.exists()) {
-            file.mkdir();
-        }
-        BufferedWriter output = new BufferedWriter(new FileWriter(new File(outputFolderPath + "/"
-                + count + ".json")));
+        BufferedWriter output = new BufferedWriter(new FileWriter(new File(outputFolderPath
+                + ".json")));
         output.flush();
-        output.write(employmentJson.toString().toCharArray());
+        output.write(employmentJson.getJsonObject().toString().toCharArray());
         output.close();
     }
 }

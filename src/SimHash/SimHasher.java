@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
 
-import Deduplication.DeduplicatorExact;
-
 public class SimHasher {
 
     public static final String CHARSET                   = "UTF-8";
@@ -60,7 +58,5 @@ public class SimHasher {
         BitSet hash = hashFunction.hash(token);
         return hash;
     }
-
-
 
 }

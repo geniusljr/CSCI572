@@ -68,7 +68,7 @@ public class Main {
             Matcher divContentMatcher = xhtmlParser
                     .parse("/xhtml:html/xhtml:body/descendant::node()");
             ContentHandler handler = new MatchingContentHandler(new JSONTableContentHandler(
-                    outputPath, filename), divContentMatcher);
+                    outputPath), divContentMatcher);
             Metadata metadata = new Metadata();
             parser.parse(inputStream, handler, metadata, new ParseContext());
 
@@ -85,12 +85,12 @@ public class Main {
             }
         }
     }
-    
+
     public static void TSV2JSON(String datasetDir) throws IOException {
-        File tsvDir = new File(datasetDir+"/tsv/");
+        File tsvDir = new File(datasetDir + "/tsv/");
         File[] tsvFiles = tsvDir.listFiles();
         File xhtmlDir = new File(datasetDir + "/xhtml/");
-        String jsonDir = datasetDir+"/json/";
+        String jsonDir = datasetDir + "/json/";
         for (int i = 0; i < tsvFiles.length; i++) {
             String xhtmlFilePath = (xhtmlDir.getAbsolutePath() + "/" + tsvFiles[i].getName() + ".xhtml");
             System.out.println(xhtmlFilePath);
@@ -100,15 +100,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws SAXException, TikaException, IOException {
-        /*
-        String tsvPath = "dataset/tsv/computrabajo-ar-20121106.tsv";
-        String xhtmlPath = "dataset/xhtml/1.html";
-        String jsonBasicPath = "dataset/json/";
-        TSV2XHTML(tsvPath, xhtmlPath);
-        XHTML2JSON(xhtmlPath, jsonBasicPath, "1");
-        */
         TSV2JSON("dataset");
-
     }
 
 }
