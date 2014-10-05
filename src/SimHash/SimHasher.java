@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
 
-import Deduplication.DeduplicatorUtil;
+import Deduplication.DeduplicatorExact;
 
 public class SimHasher {
 
@@ -61,24 +61,6 @@ public class SimHasher {
         return hash;
     }
 
-    public static void main(String[] args) throws Exception {
-        SimHasher sh = new SimHasher("MD5");
-        String s1 = "Hello world Yishu Wu A B C D E F G";
-        String s2 = "Hello world Yishu Wu A F G";
-        BitSet b1 = sh.simHash(s1);
-        BitSet b2 = sh.simHash(s2);
-        for (int i = 0; i < HASH_BITS; i++) {
-            System.out.print(b1.get(i) ? 1 : 0);
-        }
-        System.out.println();
-        for (int i = 0; i < HASH_BITS; i++) {
-            System.out.print(b2.get(i) ? 1 : 0);
-        }
-        System.out.println();
-        System.out.println(DeduplicatorUtil.hammingDistance(b1, b2));
-        for (int i = 0; i < HASH_BITS; i++) {
-            System.out.print(b1.get(i) ? 1 : 0);
-        }
-    }
+
 
 }

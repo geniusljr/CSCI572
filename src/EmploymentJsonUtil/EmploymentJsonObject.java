@@ -6,7 +6,7 @@ public class EmploymentJsonObject {
 
     private JsonObject           employmentJson = null;
     public static final String   CHARSET        = "UTF-8";
-    public static final String[] PRIMARY_KEYS   = { "company", "department" };
+    public static final String[] PRIMARY_KEYS   = { "company", "department", "jobtype", "title" };
 
     // company, department, title, jobtype, 26133
     // company, department, title, 26078

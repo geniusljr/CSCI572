@@ -85,13 +85,29 @@ public class Main {
             }
         }
     }
+    
+    public static void TSV2JSON(String datasetDir) throws IOException {
+        File tsvDir = new File(datasetDir+"/tsv/");
+        File[] tsvFiles = tsvDir.listFiles();
+        File xhtmlDir = new File(datasetDir + "/xhtml/");
+        String jsonDir = datasetDir+"/json/";
+        for (int i = 0; i < tsvFiles.length; i++) {
+            String xhtmlFilePath = (xhtmlDir.getAbsolutePath() + "/" + tsvFiles[i].getName() + ".xhtml");
+            System.out.println(xhtmlFilePath);
+            TSV2XHTML(tsvFiles[i].getAbsolutePath(), xhtmlFilePath);
+            XHTML2JSON(xhtmlFilePath, jsonDir, tsvFiles[i].getName());
+        }
+    }
 
     public static void main(String[] args) throws SAXException, TikaException, IOException {
+        /*
         String tsvPath = "dataset/tsv/computrabajo-ar-20121106.tsv";
         String xhtmlPath = "dataset/xhtml/1.html";
         String jsonBasicPath = "dataset/json/";
         TSV2XHTML(tsvPath, xhtmlPath);
         XHTML2JSON(xhtmlPath, jsonBasicPath, "1");
+        */
+        TSV2JSON("dataset");
 
     }
 

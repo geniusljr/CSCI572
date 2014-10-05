@@ -2,7 +2,7 @@ package SimHash;
 
 import java.util.BitSet;
 
-import Deduplication.DeduplicatorUtil;
+import Deduplication.DeduplicatorExact;
 
 public class SimHashValue {
     
@@ -17,15 +17,5 @@ public class SimHashValue {
         return 1;
     }
     
-    public boolean equals(Object o) {
-        if (!(o instanceof SimHashValue)) {
-            return false;
-        }
-        if ( DeduplicatorUtil.isSame(bitSet, ((SimHashValue) o).bitSet, HAMMING_DISTANCE_THRESHOLD) ) {
-            //System.out.println("same");
-            return true;
-        } 
-        return false;
-    }
 
 }

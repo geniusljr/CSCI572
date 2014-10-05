@@ -11,6 +11,7 @@ import org.apache.tika.sax.ToTextContentHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import Deduplication.DeduplicatorExact;
 import EmploymentJsonUtil.EmploymentJsonObject;
 
 import com.google.gson.JsonObject;
@@ -18,11 +19,11 @@ import com.google.gson.JsonObject;
 public class JSONTableContentHandler extends ToTextContentHandler {
 
     // private JsonArray jsonArray;
-    private ArrayList<String> names       = new ArrayList<String>();
-    private ArrayList<String> values      = new ArrayList<String>();
-    private boolean           headStarted = false;
-    private boolean           dataStarted = false;
-    private int               count       = 0;
+    private ArrayList<String> names         = new ArrayList<String>();
+    private ArrayList<String> values        = new ArrayList<String>();
+    private boolean           headStarted   = false;
+    private boolean           dataStarted   = false;
+    private int               count         = 0;
     private String            outputPath;
 
     /**
@@ -59,20 +60,20 @@ public class JSONTableContentHandler extends ToTextContentHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (localName.equals("table")) {
-            System.out.println(count);
+            System.out.println(DeduplicatorExact.primaryKeySet.size());
             // remove the write
             // write(jsonArray.toString());
         } else if (localName.equals("tr")) {
             if (values.size() > 0) {
                 JsonObject curObj = convert2Json(names, values);
                 EmploymentJsonObject curEmploymentObj = new EmploymentJsonObject(curObj);
-                // output curObj to json file
-                try {
-                    write2Json(curEmploymentObj);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                int primaryKeyHash = curEmploymentObj.hashCode();
+                if (!DeduplicatorExact.primaryKeySet.contains(primaryKeyHash)) {
+                    // output curObj to json file
+                    
+                    //count++;
+                    DeduplicatorExact.primaryKeySet.add(primaryKeyHash);
                 }
-                count++;
 
                 values.clear();
             }
